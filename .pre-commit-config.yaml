@@ -1,0 +1,37 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace # Удаляет пробелы в концах строк
+      - id: end-of-file-fixer # Добавляет пустую строку в конце файла
+      - id: check-yaml # Проверяет синтаксис YAML
+      - id: check-added-large-files # Блокирует коммит больших файлов (>500KB)
+      - id: debug-statements # Ищет оставленные debug-вызовы (pdb, print)
+
+  - repo: https://github.com/psf/black
+    rev: 23.9.1
+    hooks:
+      - id: black
+        args: [--line-length=79] # Увеличиваем лимит
+        stages: [commit] # Только при коммите, не при ручном запуске
+
+  - repo: https://github.com/PyCQA/flake8
+    rev: 6.1.0
+    hooks:
+      - id: flake8 # Линтинг кода
+        additional_dependencies: [flake8-bugbear]
+
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v3.0.3
+    hooks:
+      - id: prettier # Форматирование JSON/HTML/JS
+        exclude: migrations/ # Исключаем папку миграций
+
+  - repo: local
+    hooks:
+      - id: django-migrations
+        name: Check Django Migrations
+        entry: python manage.py makemigrations --dry-run --check
+        language: system
+        types: [python]
+        pass_filenames: false
