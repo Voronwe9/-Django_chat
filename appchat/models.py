@@ -10,6 +10,9 @@ from .validators import (
 
 
 class User(AbstractUser):
+    """
+    Кастомная модель пользователя с дополнительными полями.
+    """
     phone = models.CharField(
         max_length=20, verbose_name="Номер телефона", blank=True, null=True
     )
@@ -34,15 +37,24 @@ class User(AbstractUser):
         verbose_name_plural = "Пользователи"
 
     def save(self, *args, **kwargs):
+        """
+        Сохраняет пользователя, предварительно проверяя сложность пароля.
+        """
         if self.password:
             validate_password_complexity(self.password)
         super().save(*args, **kwargs)
 
     def __str__(self):
+        """
+        Возвращает имя пользователя.
+        """
         return self.username
 
 
 class Post(models.Model):
+    """
+    Модель поста с заголовком, текстом, изображением и автором.
+    """
     title = models.CharField(
         max_length=200,
         verbose_name="Заголовок",
@@ -71,14 +83,23 @@ class Post(models.Model):
         ordering = ["-created_at"]
 
     def clean(self):
+        """
+        Проверяет, что автор поста является совершеннолетним.
+        """
         if self.author.birth_date:
             validate_adult(self.author.birth_date)
 
     def __str__(self):
+        """
+        Возвращает заголовок поста.
+        """
         return self.title
 
 
 class Comment(models.Model):
+    """
+    Модель комментария к посту.
+    """
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -105,4 +126,7 @@ class Comment(models.Model):
         ordering = ["created_at"]
 
     def __str__(self):
+        """
+        Возвращает строковое представление комментария.
+        """
         return f'Комментарий от {self.author.username} к посту "{self.post.title}"'  # noqa: E501
