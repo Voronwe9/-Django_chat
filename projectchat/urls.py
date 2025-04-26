@@ -20,7 +20,6 @@ from rest_framework.authtoken import views
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-# Настройки Swagger
 schema_view = get_schema_view(
     openapi.Info(
         title="Chat API",
@@ -36,12 +35,36 @@ urlpatterns = [
         schema_view.with_ui("swagger", cache_timeout=0),
         name="schema-swagger",
     ),
+    """
+    Endpoint для доступа к Swagger UI - интерактивной документации API.
+    Позволяет тестировать API endpoints прямо из браузера.
+    """
+    
     path(
         "redoc/",
         schema_view.with_ui("redoc", cache_timeout=0),
         name="schema-redoc",
     ),
+    """
+    Endpoint для доступа к ReDoc - альтернативному представлению документации API.
+    Предоставляет более читабельное, но менее интерактивное отображение API.
+    """
+    
     path("admin/", admin.site.urls),
+    """
+    Endpoint для доступа к Django admin панели.
+    Используется для управления данными и пользователями администраторами системы.
+    """
+    
     path("api/", include("appchat.urls")),
+    """
+    Базовый endpoint для всех API routes чат-приложения.
+    Все остальные API endpoints определены в appchat.urls.
+    """
+    
     path("api-token-auth/", views.obtain_auth_token),
+    """
+    Endpoint для аутентификации пользователей и получения токена.
+    Принимает username и password, возвращает auth token для использования в API.
+    """
 ]
